@@ -18,13 +18,38 @@ function getCocktails(e){
     if(searchTerm === ''){
         ui.printMessage('Print Add Something', 'danger');
     }else{
-        cocktail.getDrinksByName(searchTerm)
-            .then(cocktails => {
-                if(cocktails.cocktails.drinks === null){
-                    ui.printMessage('There is no result', 'danger');
+        // Server Response
+        let serverResponse;
+
+        // Type of search
+
+        const type = document.querySelector('#type').value;
+
+        // Evaluate 
+
+        switch (type) {
+            case 'name':
+                serverResponse = cocktail.getDrinksByName(searchTerm);
+                break;
+            case 'ingredient':
+                serverResponse = cocktail.getDrinksByIngredient(searchTerm);
+                break;
+        }            
+
+        serverResponse.then(cocktails => {
+            if(cocktails.cocktails.drinks === null){
+                ui.printMessage('There is no result', 'danger');
+            }else{
+                //console.log(cocktails.cocktails.drinks);
+                if(type === 'name'){
+                    // Display Ingredient
+                    ui.displayDrinksWithIngredients(cocktails.cocktails.drinks);
                 }else{
-                    ui.displayWithIngredient();
+                    // Diplay without Ingredient
+                    ui.displayDrink(cocktails.cocktails.drinks);
                 }
-            });
+                
+            }
+        });
     }
 }
