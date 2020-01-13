@@ -1,4 +1,51 @@
 class UI{
+    // Display Drink Categories
+    printCategories(){
+        const categoryList = cocktail.getCategories()
+            .then(categories => {
+                //console.log(categories.categories.drinks);
+                const catList = categories.categories.drinks;
+
+                const firstOption = document.createElement('option');
+                firstOption.textContent = '-Select-';
+                firstOption.value = '';
+                document.querySelector('#search').appendChild(firstOption);
+
+                catList.forEach(category => {
+                    const option = document.createElement('option');
+                    option.textContent = category.strCategory;
+                    option.value = category.strCategory.split(' ').join('-');
+                    
+                    document.querySelector('#search').appendChild(option);
+                });
+            })
+    }
+    
+
+    displayDrinks(drinks){
+        const resultsWrapper = document.querySelector('.results-wrapper');
+        resultsWrapper.style.display = 'block';
+
+        const resultsDiv = document.querySelector('#results');
+
+        //Loop through drinks
+        drinks.forEach(drink => {
+            resultsDiv.innerHTML += `
+                <div class="col-md-4">
+                    <div class="card my-3">
+                        <img class="card-img-top" src="${drink.strDrinkThumb}" alt="${drink.strDrink}">
+                    </div>
+                    <div class="card-body">
+                        <h2 class="card-title text-center">${drink.strDrink}</h2>
+                        <a data-target="#recipe" href="#" class="btn btn-success get-recipe" data-toggle="modal" data-id="${drink.idDrink}">Get Receive</a>
+                    </div>
+                </div>
+            `;
+        });
+
+    }
+
+
     displayDrinksWithIngredients(drinks){
         // Show Results
         const resultsWrapper = document.querySelector('.results-wrapper');
@@ -63,6 +110,19 @@ class UI{
         return ingredientsTemplate;
     }
 
+    displaySingleRecipe(recipe){
+        const modalTitle = document.querySelector('.modal-title'),
+              modalDescription = document.querySelector('.modal-body .description-text'),
+              modalIngredients = document.querySelector('.modal-body .ingredient-list');
+
+        console.log(recipe);
+        modalTitle.innerHTML = recipe.strDrink;
+        modalDescription.innerHTML = recipe.strInstructions;
+        
+        modalIngredients.innerHTML = this.displayIngredients(recipe);
+
+    }
+
     printMessage(message, className){
         const div = document.createElement('div');
         div.innerHTML = `
@@ -79,5 +139,10 @@ class UI{
         setTimeout(() => {
             document.querySelector('.alert').remove();
         }, 3000);
+    }
+
+    clearResults(){
+        const resultsDiv = document.querySelector('#results');  
+        resultsDiv.innerHTML = '';
     }
 }

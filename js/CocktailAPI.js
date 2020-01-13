@@ -17,4 +17,24 @@ class CocktailAPI{
             cocktails
         }
     }
+
+    async getSingleReceive(id){
+        const apiResource = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`);
+        const recipe = await apiResource.json();
+        return {
+            recipe
+        } 
+    }
+
+    // Retrives all the categories
+    async getCategories(){
+        const apiResource = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list`);
+
+        const categories = await apiResource.json();
+
+        return {
+            categories
+        }
+    }
+
 }
