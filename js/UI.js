@@ -3,7 +3,6 @@ class UI{
     printCategories(){
         const categoryList = cocktail.getCategories()
             .then(categories => {
-                //console.log(categories.categories.drinks);
                 const catList = categories.categories.drinks;
 
                 const firstOption = document.createElement('option');
@@ -33,6 +32,9 @@ class UI{
             resultsDiv.innerHTML += `
                 <div class="col-md-4">
                     <div class="card my-3">
+                        <button type="button" data-id="${drink.idDrink}" class="favorite-btn btn btn-outline-info">
+                            +
+                        </button>
                         <img class="card-img-top" src="${drink.strDrinkThumb}" alt="${drink.strDrink}">
                     </div>
                     <div class="card-body">
@@ -57,10 +59,13 @@ class UI{
             resultsDiv.innerHTML += `
                 <div class="col-md-6">
                     <div class="card my-3">
+                        <button type="button" data-id="${drink.idDrink}" class="favorite-btn btn btn-outline-info">
+                            +
+                        </button>
                         <img class="card-img-top" src="${drink.strDrinkThumb}" alt="${drink.strDrink}">
 
                         <div class="card-body">
-                            <h2 class="card-title text-center"></h2>
+                            <h2 class="card-title text-center">${drink.strDrink}</h2>
                             <p class="card-text font-weight-bold">Instructions</p>
                             <p class="card-text">
                                 ${drink.strInstructions}
@@ -87,6 +92,7 @@ class UI{
                 </div>
             `
         });
+        this.isFavorite();
     }
 
     // Print Ingredients
@@ -144,5 +150,46 @@ class UI{
     clearResults(){
         const resultsDiv = document.querySelector('#results');  
         resultsDiv.innerHTML = '';
+    }
+
+    // Display Favorites
+    displayFavorites(favorites){
+        const favoritesTable = document.querySelector('#favorites tbody');
+        favorites.forEach(drink => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <img src="${drink.image}" alt="${drink.name}" width=150>
+                </td>
+                <td>${drink.name}</td>
+                <td>
+                    <a href="#" data-toggle="modal" data-target="#recipe" data-id="${drink.id}" class="btn btn-success get-recipe">
+                        View
+                    </a>
+                </td>
+                <td>
+                    <a href="#" data-toggle="modal" data-id="${drink.id}" class="btn btn-danger remove-recipe">
+                        Remove
+                    </a>
+                </td>
+            `;
+            favoritesTable.appendChild(tr);
+        });
+    }
+    removeFavorite(element){
+        element.remove();
+    }
+
+    isFavorite(){
+        const drinks = cocktailDB.getFromDB();
+        drinks.forEach(drink => {
+            let {id} = drink;
+
+            let favoriteDrink = document.querySelector(`[data-id="${id}"]`);
+            if(favoriteDrink){
+                favoriteDrink.classList.add('is-favorite');
+                favoriteDrink.textContent = '-';
+            }
+        });
     }
 }
